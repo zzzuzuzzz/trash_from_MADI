@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<form id="form">
+    <p><i>Пожалуйста, заполните форму. Обязательные поля помечены </i><em>*</em></p>
+    <fieldset>
+        <legend>Контактная информация</legend>
+        <label for="name">Имя <em>*</em></label>
+        <input name="name" id="name" type="text" placeholder="Имя" required><br>
+        <label for="telephone">Телефон</label>
+        <input name="number" id="telephone" type="number" placeholder="8 999 876 54 32"><br>
+        <label for="email">Email <em>*</em></label>
+        <input name="email" id="email" type="email" placeholder="same@mail.ru" required><br>
+    </fieldset>
+    <fieldset>
+        <legend>Персональная информация</legend>
+        <label for="age">Возраст<em>*</em></label>
+        <input name="age" id="age" type="number" min="18" max="120" placeholder="20" required><br>
+        <label for="gender">Пол</label>
+        <select name="select" id="gender">
+            <option value="female">Женщина</option>
+            <option value="male">Мужчина</option>
+            <option value="some" selected disabled>Выберете пол</option>
+        </select><br>
+        <select name="select-2" id="gender-2">
+            <option value="car" selected disabled>Ваша машина</option>
+            <optgroup label="США">
+                <option value="ford">Форд</option>
+                <option value="must">Мустанг</option>
+            </optgroup>
+            <optgroup label="Китай">
+                <option value="cheery">Чери</option>
+                <option value="exeed">Эксид</option>
+            </optgroup>
+            <optgroup label="Япония">
+                <option value="nis">Нисан</option>
+                <option value="honda">Хонда</option>
+            </optgroup>
+        </select><br><br>
+        <label for="comments">Перечислите личные качества</label>
+        <textarea name="textarea" id="comments" placeholder="Качества"></textarea>
+    </fieldset>
+    <fieldset>
+        <legend>Выберите ваших любимых животных</legend>
+        <label for="zebra"><input name="animal_zebra" id="zebra" type="checkbox"> Зебра</label>
+        <label for="cat"><input name="animal_cat" id="cat" type="checkbox"> Кошак</label>
+        <label for="anaconda"><input name="animal_anaconda" id="anaconda" type="checkbox"> Анаконда</label>
+        <label for="human"><input name="animal_human" id="human" type="checkbox"> Человек</label>
+        <label for="elephant"><input name="animal_elephant" id="elephant" type="checkbox"> Слон</label>
+        <label for="wildebeest"><input name="animal_wildebeest" id="wildebeest" type="checkbox"> Антилопа</label>
+        <label for="pigeon"><input name="animal_pigeon" id="pigeon" type="checkbox"> Голубь</label>
+        <label for="crab"><input name="animal_crab" id="crab" type="checkbox"> Краб</label>
+    </fieldset>
+    <label><input name="radio-1" type="radio"> радио-1</label>
+    <label><input name="radio-1" type="radio"> радио-1</label>
+    <label><input name="radio-2" type="radio"> радио-2</label>
+    <label><input name="radio-2" type="radio"> радио-2</label>
+    <input name="url" type="url" placeholder="Url">
+    <input name="search" type="search" placeholder="Search">
+    <input name="pas" id="pas" type="password" placeholder="password"><br>
+    <label for="speed">Скорость</label>
+    <input name="speed" id="speed" type="range" min="0" max="120" value="30"><br>
+    <label for="date">Дата рождения</label>
+    <input name="date" id="date" type="date" min="1920-01-01" max="2000-01-01"><br>
+    <fieldset>
+        <legend>Выберите любимый цвет</legend>
+        <label for="mycolor">Цвет</label>
+        <input name="color" id="mycolor" type="color"><br>
+    </fieldset>
+    <p>Выберите вариант</p>
+    <select name="form_select" size="5" multiple="multiple">
+        <option value="Значение 1">Первый вариант</option>
+        <option value="Значение 2">Второй вариант</option>
+        <option selected="selected" value="Значение 3">Третий вариант</option>
+        <option selected="selected"value="Значение 4">Четвертый вариант</option>
+        <option value="Значение 5">Пятый вариант</option>
+        <option value="Значение 6">Шестой вариант</option>
+    </select>
+    <button type="submit">submit</button>
+    <button type="reset">reset</button>
+    <button type="button">button</button>
+</form>
+<script src="js/main.js"></script>
+</body>
+</html>
