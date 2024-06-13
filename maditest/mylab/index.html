@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>тир</title>
+  <link href="assets/css/tir.css" rel="stylesheet">
+  <script src="assets/js/jquery-3.7.1.min.js"></script>
+  <script src="index.js" defer></script>
+</head>
+<body>
+<div class="mainBlock">
+  <label id="shot">Количсетво сделаных выстрелов: </label>
+  <div>
+    <label for="range">Скорость Ильи</label>
+    <input type="range" min="1" max="20" step="1" value="5" id="range" style="width: 200px">
+  </div>
+  <div>
+    <label for="rangeTwo">Скорость прицела</label>
+    <input type="range" min="1" max="5" step="1" value="3" id="rangeTwo" style="width: 200px">
+  </div>
+  <form class="life">
+    <input type="text" id="inputLifeNumber" style="width: 200px">
+    <input type="number">
+  </form>
+  <div class="lifeNumber none"></div>
+</div>
+<canvas id="myCanvas" style="width: calc(100% - 200px); height: calc(100% - 200px)"></canvas>
+<button id="runButton">НАЧАТЬ ИГРУ</button>
+<button id="stopButton">Пауза</button>
+
+</body>
+</html>

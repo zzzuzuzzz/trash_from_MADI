@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+body {
+    display: grid;
+    grid-template-rows: 10vh 80vh 10vh;
+    grid-template-columns: 1fr 4fr 1fr;
+    background:
+            linear-gradient(217deg, rgba(16, 113, 181, 0.9), rgba(255, 0, 0, 0) 70.71%),
+            linear-gradient(127deg, rgba(243, 66, 19, 0.5), rgba(0, 255, 0, 0) 70.71%),
+            linear-gradient(336deg, rgba(222, 145, 81, 0.4), rgba(0, 0, 255, 0) 70.71%);
+    border-left: 0.01vw solid rgba(243, 66, 19, 0.5);
+    border-right: 0.01vw solid rgba(16, 113, 181, 0.9);
+    border-top: 0.01vh solid rgba(16, 113, 181, 0.9);
+    border-bottom: 0.01vh solid rgba(222, 145, 81, 0.4);
+}
+.container {
+    width: 100%;
+    height: 100%;
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(100px);
+    border-radius: 15px;
+}
+h1 {
+    grid-column: 2;
+    grid-row: 2;
+}
+h2 {
+    grid-column: 2;
+    grid-row: 3;
+}
+.contOne {
+    grid-column: 2;
+    grid-row: 4;
+}
+.contTwo {
+    grid-column: 2;
+    grid-row: 5;
+}
+.contThree {
+    grid-column: 2;
+    grid-row: 6;
+}
+.contOne, .contTwo, .contThree {
+    border-radius: 15px;
+    width: 100%;
+    margin-top: 5px;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(100px);
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+.circle {
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(100px);    border-radius: 100px;
+    margin-top: 28px;
+    margin-left: 50px;
+    border: black 3px solid;
+}
+h3 {
+    margin-top: 20px;
+    text-align: left;
+}
