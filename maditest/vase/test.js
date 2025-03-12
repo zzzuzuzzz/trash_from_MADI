@@ -12,6 +12,8 @@ document.querySelector('.button').onclick = function () {
     let watInLit = document.getElementById("watInLit");
     let watInBig = document.getElementById("watInBig");
     let little = document.querySelector('.little')
+    let text_field_one = document.getElementById("text_field");
+    let text_field_two = document.getElementById("faqfq");
 
     watInLit.style.bottom = '-200px'
     watInBig.style.bottom = '-200px'
@@ -44,7 +46,9 @@ document.querySelector('.button').onclick = function () {
     timerik += 2000
     sec += 2000
 
-    function watch(el, abc) {
+    function watch(el, abc, example_value_one, example_value_two) {
+        text_field_one.textContent = example_value_one
+        text_field_two.textContent = example_value_two
         if (abc === '-200px') {
             el.style.bottom = -timeSum + 'px'
         } else {
@@ -55,7 +59,7 @@ document.querySelector('.button').onclick = function () {
     lbResult.textContent = '&hellip;'
     while (vaseBigWat !== result || vaseLitWat !== result) {
         vaseLitWat = vaseLitWat + vaseLitVol;
-        setTimeout(watch.bind(null, watInLit, 0), timerik)
+        setTimeout(watch.bind(null, watInLit, 0, vaseLitWat), timerik)
         timerik += 2000
         sec += 2000
         vaseBigWat = vaseBigWat + vaseLitWat;

@@ -16,21 +16,146 @@
 <body>
 <canvas id="myCanvas" width="1000" height="600"></canvas>
 <script>
+  let mazeOpt = [17 , 17];
+  let matrix;
+  let winBlock;
+  class Tractor {
+
+    constructor(x, y) {
+      this.x = x,
+              this.y = y,
+              this.STEP = 2
+    };
+
+    //Берет новое направление
+    getNewWay() {
+      let nextPos = [-this.STEP, this.STEP];
+      return nextPos[Math.floor(Math.random() * 2)];
+    }
+
+    //Строит новый путь
+    createNewWay() {
+      let newX;
+      let newY;
+
+      //Если выпадает 0, то смещение будет идти по оси Y
+      if (Math.floor(Math.random() * 2) == 0) {
+        newX = this.x;
+        newY = this.y + this.getNewWay();
+
+        while (!this.isInMaze(newY, newX)) {
+          newY = this.y + this.getNewWay();
+        }
+
+        if (matrix[newY][newX] == 1) {
+          if (this.y - newY > 0) {
+            matrix[newY+1][newX] = 0;
+            matrix[newY][newX] = 0;
+          } else {
+            matrix[newY-1][newX] = 0;
+            matrix[newY][newX] = 0;
+          }
+
+
+        }
+
+        //Если выпадает 1, то смещение будет идти по оси X
+      } else {
+        newX = this.x + this.getNewWay();
+        newY = this.y;
+        while (!this.isInMaze(newY, newX)) {
+          newX = this.x + this.getNewWay();
+        }
+
+        if (matrix[newY][newX] == 1) {
+          if (this.x - newX > 0) {
+            matrix[newY][newX+1] = 0;
+            matrix[newY][newX] = 0;
+          } else {
+            matrix[newY][newX-1] = 0;
+            matrix[newY][newX] = 0;
+          }
+
+
+        }
+      }
+
+      this.x = newX;
+      this.y = newY;
+    }
+
+    //Проверка находится ли трактор в лабиринте
+    isInMaze(y,x) {
+      if (1 <= y && y <= mazeOpt[1]-1 && 1 <= x && x <= mazeOpt[0]-1) {
+        return true;
+      }
+    }
+
+    //Рисует трактор
+    printMe() {
+      document.getElementById(`${this.y} ${this.x}`).className='tractor';
+    }
+  }
+  let blueTractor = new Tractor(1,1);
+  function isReady() {
+    for (let y = 1; y < mazeOpt[1]; y += 2) {
+      for (let x = 1; x < mazeOpt[0]; x += 2) {
+        if (matrix[y][x]) {
+          return false
+        }
+      }
+    }
+    return true;
+  }
+  function createMAZE() {
+    let startTime = new Date
+    while (!isReady()) {
+      for (let i = 0; i < 100; i++){
+        blueTractor.createNewWay();
+      }
+    }
+    let endTime = new Date
+    console.log(endTime-startTime)
+  }
+  function createMatrixOfMaze() {
+    let matrix = new Array(mazeOpt[1]);
+    for (let y = 0; y < matrix.length; y++) {
+      matrix[y] = new Array(mazeOpt[0]);
+      matrix[y].fill(1);
+    }
+
+    //НАЧАЛЬНАЯ ПОЗИЦИЯ ЛАБИРИНТА
+    console.log(matrix)
+    matrix[1][1] = 0;
+    return matrix;
+  }
+  matrix = createMatrixOfMaze()
+  createMAZE();
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
-  const map = [
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-          [1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1],
-          [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
-          [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-          [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-          [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
-          [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-          [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
-          [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-  ];
+  // const map = [
+  //         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  //         [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+  //         [1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1],
+  //         [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+  //         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+  //         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+  //         [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+  //         [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+  //         [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+  //         [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1],
+  //         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  // ];
+  function endBlock() {
+    let endX = mazeOpt[0] - 1;
+    let endYArr = new Array;
+    for (let i = 1; i < mazeOpt[1];i+=2) {
+      endYArr.push(i);
+    }
+    let randomEndY = endYArr[Math.floor(Math.random() * endYArr.length)];
+    return {y: randomEndY, x: endX};
+  }
+  const map = matrix;
   let test = [
     [0, 0],
     [250, 150],
@@ -41,8 +166,10 @@
     [750, 450],
     [1000, 600],
   ];
+  let fin = endBlock()
+  console.log(fin)
   let playerPlace = [1,1]
-  let win = [9,9]
+  let win = [fin.x, fin.y]
   let playerDirection = 'bottom';
 
 
@@ -205,6 +332,10 @@
         ctx.stroke();
         if (el === 1) {
           ctx.fillStyle = "rgb(26,26,26)";
+          ctx.fill();
+        }
+        if (ind == fin.x && id == fin.y) {
+          ctx.fillStyle = "rgb(255,0,0)";
           ctx.fill();
         }
         if (ind === playerPlace[0] && id === playerPlace[1]) {
