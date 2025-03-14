@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="mainBlock">
-  <label id="shot">Количество сделанных выстрелов: </label>
+  <label id="shot">Количество сделанных выстрелов: 0</label>
   <div>
     <label for="range">Скорость тарелки</label>
     <input type="range" min="1" max="20" step="1" value="5" id="range">
@@ -18,14 +18,16 @@
     <input type="range" min="1" max="5" step="1" value="3" id="rangeTwo">
   </div>
   <form class="life">
-    <input type="text" id="inputLifeNumber">
-    <input type="number">
+    <label for="inputLifeNumber">Количество жизней</label><input type="number" id="inputLifeNumber" max="9" min="1">
   </form>
-  <div class="lifeNumber none"></div>
+  <div class="lifeNumber"></div>
 </div>
 <canvas id="myCanvas"></canvas>
 <button id="runButton">НАЧАТЬ ИГРУ</button>
 <button id="stopButton">Пауза</button>
-<img src="gameOverScreen.jpg" alt="Game Over" id="gameOverScreen">
+<form id="gameOverScreen" class="none">
+  <img src="gameOverScreen.jpg" alt="Game Over">
+  <input type="submit" value="Еще раз?">
+</form>
 </body>
 </html>

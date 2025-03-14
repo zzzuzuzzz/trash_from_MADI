@@ -5,74 +5,77 @@ function randomInteger(min, max) {
 }
 
 
-let dx = 1;
-let dy = 1;
-let dxPath = 1;
-let dyPath = 1
-let tumbler = false
+// переменные в воркере
+let planEnemyX = 1; // скорость и длина шага по Х
+let planEnemyY = 1; // скорость и длина шага по Y
+let planEnemyXPath = 1; // Направление по Х
+let planEnemyYPath = 1 // Направление по Y
+let running = false; // признак запущена игра или нет
 let inter;
-let runing = false;
 
-onmessage = function (e) {
-    dx = e.data[0];
-    dy = e.data[1];
-    tumbler = e.data[2];
-    dxPath = dx;
-    dyPath = dy;
-    puskilinepusk()
+
+onmessage = function (e)  // Принимаем сообщения от основного кода
+{
+    planEnemyX = e.data[0];
+    planEnemyY = e.data[1];
+    running = e.data[2]; // если есть 3 элемент, значит игра запущена
+    planEnemyXPath = planEnemyX;
+    planEnemyYPath = planEnemyY;
+    offOrOnGame()
 }
 
 
 
-function changePath() {
+function changePath() // в зависимости от рандома выбирается 1 из 8 направлений
+{
     number = randomInteger(1, 8)
     switch (number) {
         case 1:
-            dx = dxPath;
-            dy = -dyPath;
+            planEnemyX = planEnemyXPath;
+            planEnemyY = -planEnemyYPath;
             break
         case 2:
-            dx = -dxPath;
-            dy = dyPath;
+            planEnemyX = -planEnemyXPath;
+            planEnemyY = planEnemyYPath;
             break
         case 3:
-            dx = -dxPath;
-            dy = -dyPath;
+            planEnemyX = -planEnemyXPath;
+            planEnemyY = -planEnemyYPath;
             break
         case 4:
-            dx = dxPath;
-            dy = dyPath;
+            planEnemyX = planEnemyXPath;
+            planEnemyY = planEnemyYPath;
             break
         case 5:
-            dx = dxPath;
-            dy = 0;
+            planEnemyX = planEnemyXPath;
+            planEnemyY = 0;
             break
         case 6:
-            dx = 0;
-            dy = -dyPath;
+            planEnemyX = 0;
+            planEnemyY = -planEnemyYPath;
             break
         case 7:
-            dx = 0;
-            dy = dyPath;
+            planEnemyX = 0;
+            planEnemyY = planEnemyYPath;
             break
         case 8:
-            dx = -dxPath;
-            dy = 0;
+            planEnemyX = -planEnemyXPath;
+            planEnemyY = 0;
             break
     }
 }
 
-function postMSG() {
-    changePath()
-    postMessage([dx, dy])
+function postMSG() // Функция отправки сообщений в оснвоной код
+{
+    changePath() // сменили направление на рандомное
+    postMessage([planEnemyX, planEnemyY]) // отправили сообщение в основной код
 }
 
-function puskilinepusk() {
-    if (tumbler && !runing) {
-        runing = true
+function offOrOnGame() // функция смотрит включена игра или нет
+{
+    if (running) { // если включена, то отправляет каждую секунду рандомное направление в оснвоной код
         inter = setInterval(postMSG, 1000)
-    } else if (runing) {
-        runing = false
+    } else { // если включена, то отправляет каждую секунду рандомное направление в оснвоной код
         clearInterval(inter)
     }
 }

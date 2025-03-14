@@ -52,8 +52,14 @@ input[type = 'range'], #life {
 }
 
 #gameOverScreen {
-    width: 100vw;
-    height: 100vh;
     position: absolute;
-    display: none;
+}
+#gameOverScreen img {
+    width: 100vw;
+    height: 95vh;
+}
+#gameOverScreen input {
+    width: 100vw;
+    height: 5vh;
+    background-color: #5eff00;
 }

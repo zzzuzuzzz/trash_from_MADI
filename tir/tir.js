@@ -1,310 +1,319 @@
-let numberLife = 3
-let inpValue = 1;
-let inp = document.getElementById('inputLifeNumber')
-let liveDiv = document.querySelector('.lifeNumber')
-const canvas = document.getElementById("myCanvas");
+// ------------ Переменные ---------------------
+
+// Переменные связанные с жизнями
+let liveCount; // кол-во жизней
+let liveInput = document.getElementById('inputLifeNumber'); //инпут где мы вписываем жизни
+let liveDiv = document.querySelector('.lifeNumber'); //див с жизнями
+let liveArray; // Массив жизней. Нужно будет в функции shot. Пока пусто, так как мы не выбрали кол-во жизней.
+
+// Свойства элементов игры
+
+// Свойства противника
+let enemyHeight = 50; // Высота врага
+let enemyWidth = 50; // ширина врага
+let enemyImg = new Image();
+enemyImg.src = "point.png"; // Картинка врага
+let enemyX = 1; // Позиция врага по X (левый верхний угол)
+let enemyY = 1; // Позиция врага по Y (левый верхний угол)
+let enemySpeed = 5;// скорость врага по умолчанию
+let planEnemyX = 1; // Направление движения врага по X, так же является длиной шага (шаг зависит от скорости)
+let planEnemyY = 1;// Направление движения врага по Y, так же является длиной шага (шаг зависит от скорости)
+
+// Свойства прицела
+let playerHeight = 50; // Высота прицела
+let playerWidth = 50; // Ширина прицела
+let playerImg = new Image();
+playerImg.src = "blaster.png"; // Картинка прицела
+let playerX = 1; // Позиция игрока по X (левый верхний угол)
+let playerY = 1; // Позиция игрока по Y (левый верхний угол)
+let playerSpeed = 3;// скорость игрока, так же длина шага
+let playerOldX; // Позиция игрока в прошлом по X (нужно для стирания прошлой позиции)
+let playerOldY; // Позиция игрока в прошлом по Y
+
+// Прочие свойства, переменные и настройки
+let shotImg = new Image();
+shotImg.src = "hole.png"; // Картинка выстрела
+let shotView = false; // Признак того, что произошел выстрел
+let shotCount = 0;
+let shotCountDiv = document.getElementById('shot'); // Счетчик выстрелов на экране
 let finalImg = document.getElementById('gameOverScreen')
-const ctx = canvas.getContext("2d");
-const enemyHeight = canvas.height/2;
-const enemyWidth = canvas.width/4;
-let x = canvas.width / 2;
-let y = canvas.height - enemyHeight;
-// let dxPath;
-// let dyPath;
-let dx = 1;
-let dy = 1;
-const paddleHeight = 50;
-const paddleWidth = 50;
-let paddleX = (canvas.width - paddleWidth) / 2;
-let paddleY = (canvas.height - paddleHeight) / 2;
-let paddleOldX;
-let paddleOldY;
-let paddleSpeedX = 3;
-let paddleSpeedY = 3;
-let rightPressed = false;
-let leftPressed = false;
-let topPressed = false;
-let bottomPressed = false;
-let spacePressed = false;
-let spacePressedView = false;
-let shotNumber = 0;
-let rangeValue = document.getElementById('range')
-let rangeValueTwo = document.getElementById('rangeTwo')
-let interval;
-let tumbler = false
-let tumblerTwo = false
-const worker = new Worker('worker.js')
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+const canvas = document.getElementById("myCanvas"); //ссылка на канву
+canvas.width = canvas.offsetWidth; //ширина канвы
+canvas.height = canvas.offsetHeight; //высота канвы
+const ctx = canvas.getContext("2d"); // чето там делаю игру 2д типа
 
-for (let numberLifeFor = numberLife; numberLifeFor >0; numberLifeFor--) {
+let btnStartGame = document.getElementById("runButton");
+let btnPauseGame = document.getElementById("stopButton")
+let interval; // Признак того, что игра запущена. Содержит в себе интервал в млсек и функцию отрисовки игрока и врага
 
-    let imgFull = document.createElement('img')
-    imgFull.src = "heartFull.svg"
-    imgFull.className = 'lifeIMG';
+let rightPressed = false; // тру или фолс что кнопка нажата вправо
+let leftPressed = false;// тру или фолс что кнопка нажата влево
+let topPressed = false;// тру или фолс что кнопка нажата вверх
+let bottomPressed = false;// тру или фолс что кнопка нажата вниз
 
-    liveDiv.append(imgFull);
+let enemySpeedInput = document.getElementById('range')// ссылка на ползунок тарелки
+let playerSpeedInput = document.getElementById('rangeTwo')// ссылка на ползунок прицела
+
+const worker = new Worker('worker.js') // поключил воркер
+
+
+
+
+// ------------ Логика игры ---------------------
+
+// Отрисовка жизней на экране
+function drawLive()
+{
+
+    // Проверка, что мы ввели кол-во жизней и оно от 1 до 9
+    if (liveInput.value > 9 || liveInput.value < 1 || liveInput.value === '') {
+        alert("Количество жизней может быть от 1 до 9");
+        liveDiv.innerHTML = '' // Стираем все нарисованные жизни
+        return false; // Нужно для проверки, что жизни отрисовались после вызова функции, иначе игра не запуститься
+    }
+
+    liveCount = liveInput.value // Сохраняем кол-во жизней если оно есть в инпуте
+    liveDiv.innerHTML = '' // Стираем все нарисованные жизни
+
+    // Переменная i нужна для того, что бы пройти цикл столько раз, сколько у нас жизней,
+    // но при этом не трогаю саму переменную liveCount
+    for (let i = liveCount; i !== 0; i--) {
+
+        let imgFull = document.createElement('img')
+        imgFull.src = "heartFull.svg"
+        imgFull.className = 'lifeIMG';
+
+        liveDiv.append(imgFull);
+    }
+
+    liveArray = document.getElementsByClassName('lifeIMG') // Делаем массив из жизней
+    return true;
 }
 
 
-function life(e) {
-    e.target.value = e.target.value.replace(/\D+/g, "")
-    let all = document.getElementsByClassName('lifeIMG');
-    if (inp.value !== '') {
-        inpValue = Number(inp.value)
-    } else {
-        return;
-    }
-    if (inpValue > 9) {
-        inpValue = 9
-    }
-    if (numberLife > inpValue) {
-        inpValue = numberLife - inpValue
-        numberLife = inpValue
-        for (inpValue; inpValue !== 0; inpValue--) {
-            all[inpValue - 1].remove()
+// Функция выстрела
+function shot (e)
+{
+
+    let playerCenterX = playerX +  playerWidth/2; // Определяем центр прицела по X
+    let playerCenterY = playerY +  playerHeight/2; // Определяем центр прицела по Y
+
+    if // Проверка, что попали по врагу
+    (
+        enemyX < playerCenterX &&
+        enemyX + enemyWidth > playerCenterX &&
+        enemyY < playerCenterY &&
+        enemyY + enemyHeight > playerCenterY
+    ) {
+        if (liveCount != 1) { // Смотри что жизнь не последняя
+            liveArray[liveCount - 1].src = 'heartEmpty.svg'; // Перерисовываем последнюю по списку ПОЛНЫХ сердец
+            liveCount-- ; //Уменьшили кол-во жизней
+        } else { // Если жизнь последняя
+            finalImg.classList.remove('none'); // Удаляем клас "none"
         }
-    } else if (numberLife < inpValue) {
-        inpValue =  inpValue - numberLife
-        numberLife = inpValue + numberLife
-        for (inpValue; inpValue !== 0; inpValue--) {
-
-            let imgFull = document.createElement('img')
-            imgFull.src = "heartFull.svg"
-            imgFull.className = 'lifeIMG';
-
-            liveDiv.append(imgFull);
-        }
     }
-    console.log(numberLife)
+
+    shotCount ++; // Увеличиваем кол-во выстрелов
+    shotCountDiv.textContent = `Количество сделанных выстрелов: ${shotCount}`;  // Записываем кол-во выстрелов
+
 }
 
-function lifeNull() {
-    inp.value = numberLife
+
+
+// Функция отрисовки прицела
+function drawPlayer()
+{
+    playerOldX = playerX
+    playerOldY = playerY
+    if (shotView === true) { // если происходит выстрел
+        ctx.drawImage(shotImg, playerX, playerY, playerWidth, playerHeight);
+    } else { // иначе обычная отрисовка прицела
+        ctx.drawImage(playerImg, playerX, playerY, playerWidth, playerHeight);
+    }
 }
 
-inp.addEventListener('input', life)
-inp.addEventListener('change', lifeNull)
+
+// Функция отрисовки врага
+function drawEnemy()
+{
+    ctx.drawImage(enemyImg, enemyX, enemyY, enemyWidth, enemyHeight);
+}
 
 
-document.addEventListener("keydown", keyDownHandler);
-document.addEventListener("keyup", keyUpHandler);
-document.addEventListener("mousemove", mouseMoveHandler);
 
-function mouseMoveHandler(e) {
+
+
+
+// функция когда мышка двигается
+function mouseMoveHandler(e)
+{
     const relativeX = e.clientX - canvas.offsetLeft;
     if (relativeX > 0 && relativeX < canvas.width) {
-        paddleX = relativeX - paddleWidth / 2;
+        playerX = relativeX - playerWidth / 2;
     }
     const relativeY = e.clientY - canvas.offsetTop;
     if (relativeY > 0 && relativeY < canvas.height) {
-        paddleY = relativeY - paddleHeight / 2;
+        playerY = relativeY - playerHeight / 2;
     }
 }
 
-
-function keyDownHandler(e) {
-    if (e.key == "ArrowRight") {
-        rightPressed = true;
-    } else if (e.key == "ArrowLeft") {
-        leftPressed = true;
-    } else if (e.key == "ArrowUp") {
-        topPressed = true;
-    } else if (e.key == "ArrowDown") {
-        bottomPressed = true;
-    } else if (e.key == " ") {
-        spacePressed = true;
-    }
-}
-
-function keyUpHandler(e) {
-    if (e.key == "ArrowRight") {
-        rightPressed = false;
-    } else if (e.key == "ArrowLeft") {
-        leftPressed = false;
-    } else if (e.key == "ArrowUp") {
-        topPressed = false;
-    } else if (e.key == "ArrowDown") {
-        bottomPressed = false;
-    } else if (e.key == " ") {
-        spacePressed = false;
-        spacePressedView = false;
+// функция когда нажали на какую то кнопку
+function keyDownHandler(e)
+{
+    // свич на проверку какая кнопка была нажата для определения направления
+    // и установки признака нажата кнопки в этом направлении
+    switch (e.key) {
+        case "ArrowRight":
+            rightPressed = true;
+            break
+        case "ArrowLeft":
+            leftPressed = true;
+            break
+        case "ArrowUp":
+            topPressed = true;
+            break
+        case "ArrowDown":
+            bottomPressed = true;
+            break
+        case " ":
+            shotView = true
+            shot(e)
+            break
     }
 }
 
 
 
-function shot() {
-    const paddleCenterX = paddleX +  paddleWidth/2;
-    const paddleCenterY = paddleY +  paddleHeight/2;
-    if (x < paddleCenterX && x + enemyWidth > paddleCenterX && y < paddleCenterY && y + enemyHeight > paddleCenterY) {
-        spacePressedView = true;
-        if (numberLife !== 1) {
-            document.getElementsByClassName('lifeIMG')[numberLife - 1].src = 'heartEmpty.svg'
-            numberLife--
-        } else {
-            document.getElementsByClassName('lifeIMG')[0].src = 'heartEmpty.svg'
-            setTimeout(() => {
-                finalImg.style.display = 'initial';
-            }, 10);
+// функция когда отпустили какую нибудь кнопку
+function keyUpHandler(e)
+{
+    // свич на проверку какая кнопка была отпущена для определения направления
+    // и установки признака отпуска кнопки в этом направлении
+    switch (e.key) {
+        case "ArrowRight":
+            rightPressed = false;
+            break
+        case "ArrowLeft":
+            leftPressed = false;
+            break
+        case "ArrowUp":
+            topPressed = false;
+            break
+        case "ArrowDown":
+            bottomPressed = false;
+            break
+        case " ":
+            shotView = false
+            break
+    }
+}
+
+
+
+document.addEventListener("keydown", keyDownHandler); // Нажали на какую нибудь кнопку
+document.addEventListener("keyup", keyUpHandler); // Отпустили какую нибудь кнопку
+document.addEventListener("mousemove", mouseMoveHandler); // Двигаем мышкой
+
+
+
+
+
+
+function draw()
+{
+    ctx.clearRect(enemyX, enemyY, enemyWidth, enemyHeight); // стираем врага
+    ctx.clearRect(playerOldX, playerOldY, playerWidth, playerHeight); // стираем прицел
+
+
+    if (enemyX + planEnemyX > canvas.width - enemyWidth || enemyX + planEnemyX < 0) {
+        planEnemyX = -planEnemyX; // если впендюрились в стену, то сменим направление сохранив длину шага
+    }
+    if (enemyY + planEnemyY > canvas.height - enemyHeight || enemyY + planEnemyY < 0) {
+        planEnemyY = -planEnemyY; // если впендюрились в стену, то сменим направление сохранив длину шага
+    }
+
+    enemyX += planEnemyX; // Меняем координаты врага
+    enemyY += planEnemyY; // Меняем координаты врага
+
+
+    if (rightPressed) { // если двигаемся вправо
+        playerX += playerSpeed;
+        if (playerX + playerWidth > canvas.width) {
+            playerX = canvas.width - playerWidth;
         }
-    }
-    shotNumber ++;
-    document.getElementById('shot').textContent = 'Количсетво сделаных выстрелов: ' + shotNumber;
-
-}
-let imgEnemy = new Image();
-imgEnemy.src = "point.png";
-function drawBall() {
-    // ctx.beginPath();
-    // ctx.rect(x + (enemyWidth/2), y - (enemyHeight/2), enemyWidth, enemyHeight);
-    // ctx.fillStyle = "rgba(221,0,0,0)";
-    paddleOldX = paddleX
-    paddleOldY = paddleY
-    ctx.drawImage(imgEnemy, x, y, enemyWidth, enemyHeight);
-    // ctx.fill();
-    // ctx.closePath();
-}
-
-let img = new Image();
-img.src = "blaster.png";
-let imgJS = new Image();
-imgJS.src = "hole.png";
-function drawPaddle() {
-    paddleOldX = paddleX
-    paddleOldY = paddleY
-    if (spacePressedView === true) {
-        // ctx.beginPath();
-        // ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
-        // ctx.fillStyle = "rgba(221,0,0,0)";
-        ctx.drawImage(imgJS, paddleX, paddleY, paddleWidth, paddleHeight);
-        // ctx.fill();
-        // ctx.closePath();
-    } else {
-        // ctx.beginPath();
-        // ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
-        // ctx.fillStyle = "rgba(221,0,0,0)";
-        ctx.drawImage(img, paddleX, paddleY, paddleWidth, paddleHeight);
-        // ctx.fill();
-        // ctx.closePath();
-    }
-}
-
-function draw() {
-    if (tumbler) {
-        ctx.clearRect(x, y, enemyWidth, enemyHeight);
-        ctx.clearRect(paddleOldX, paddleOldY, paddleWidth, paddleHeight);
-    }
-
-    // collisionDetection();
-
-    if (x + dx > canvas.width - enemyWidth || x + dx < 0) {
-        dx = -dx;
-    }
-    if (y + dy > canvas.height - enemyHeight || y + dy < 0) {
-        dy = -dy;
-    }
-
-    if (rightPressed) {
-        paddleX += paddleSpeedX;
-        if (paddleX + paddleWidth > canvas.width) {
-            paddleX = canvas.width - paddleWidth;
+    } else if (leftPressed) { // если двигаемся влево
+        playerX -= playerSpeed;
+        if (playerX < 0) {
+            playerX = 0;
         }
-    } else if (leftPressed) {
-        paddleX -= paddleSpeedX;
-        if (paddleX < 0) {
-            paddleX = 0;
+    } else if (topPressed) { // если двигаемся вверх
+        if (playerY !== 0) {
+            playerY -= playerSpeed;
         }
-    } else if (topPressed) {
-        if (paddleY !== 0) {
-            paddleY -= paddleSpeedY;
-        }
-    } else if (bottomPressed) {
-        if (canvas.height - paddleY !== 50) {
-            paddleY += paddleSpeedY;
+    } else if (bottomPressed) { // если двигаемся вниз
+        if (canvas.height - playerY !== 50) {
+            playerY += playerSpeed;
         }
     }
 
-    x += dx;
-    y += dy;
-    drawBall();
-    drawPaddle();
-    tumbler = true
+    drawEnemy();
+    drawPlayer();
 }
+
+
+
+// функция смены скорости врага
+function changeSpeedEnemy()
+{
+    enemySpeed = enemySpeedInput.value * 0.2;
+    planEnemyX = enemySpeed;
+    planEnemyY = enemySpeed;
+    worker.postMessage([planEnemyX, planEnemyY, true])
+}
+enemySpeedInput.addEventListener('change', changeSpeedEnemy)
+
+
+// функция смены скорости прицела
+function changeSpeedPlayer()
+{
+    playerSpeed = +playerSpeedInput.value;
+}
+playerSpeedInput.addEventListener('change', changeSpeedPlayer)
+
+
+
+
+
+worker.onmessage = function (e)// слушаем сообщения от воркера
+{
+    planEnemyX = e.data[0];
+    planEnemyY = e.data[1];
+}
+
+
+
+
+// Функция отрисовки врага
 function startGame() {
-    document.querySelector('.lifeNumber').classList.remove('none');
-    tumblerTwo = true
+    let start = drawLive(); // вызываем отрисовку сердец
+    if (start === false) { // если возникла ошибка при отрисовки сердец
+        return;
+    }
     interval = setInterval(draw, 10);
+    worker.postMessage([planEnemyX, planEnemyY, true]) // отправили сообщение в воркер, что игра началась
 }
+
+
+// Функция отрисовки врага
 function stopGame() {
     clearInterval(interval);
-    tumblerTwo = false
-    worker.postMessage([dx, dy, tumblerTwo])
+    worker.postMessage([planEnemyX, planEnemyY, false]) // отправили сообщение в воркер, что игра остановилась
 }
 
-document.getElementById("runButton").addEventListener("click", startGame);
-document.getElementById("stopButton").addEventListener("click", stopGame);
+btnStartGame.addEventListener("click", startGame);
+btnPauseGame.addEventListener("click", stopGame);
 
-function shotik (e) {
-    if (e.key === ' ') {
-        shot()
-    }
-}
-document.addEventListener('keydown', shotik)
-
-
-
-
-
-function postPath(dx, dy) {
-    worker.postMessage([dx, dy, tumbler])
-}
-
-
-
-function firstBespolezniFunc() {
-    const speed = rangeValue.value * 0.2;
-    dx = speed;
-    dy = -(speed);
-    // dxPath = speed * 0.2;
-    // dyPath = -(speed * 0.2);
-    postPath(dx, dy)
-}
-rangeValue.addEventListener('change', firstBespolezniFunc)
-function secondBespolezniFunc() {
-    const speed = +rangeValueTwo.value;
-    switch (speed) {
-        case 1:
-            paddleSpeedX = 1;
-            paddleSpeedY = 1;
-            break
-        case 2:
-            paddleSpeedX = 2;
-            paddleSpeedY = 2;
-            break
-        case 3:
-            paddleSpeedX = 3;
-            paddleSpeedY = 3;
-            break
-        case 4:
-            paddleSpeedX = 4;
-            paddleSpeedY = 4;
-            break
-        case 5:
-            paddleSpeedX = 5;
-            paddleSpeedY = 5;
-            break
-    }
-}
-rangeValueTwo.addEventListener('change', secondBespolezniFunc)
-
-
-
-
-
-worker.onmessage = function (e) {
-    dx = e.data[0];
-    dy = e.data[1];
-    // dxPath = e.data[2];
-    // dyPath = e.data[3]
-}
+document.getElementById('gameOverScreen').addEventListener('submit', (e) => {
+    e.defaultPrevented
+    window.location.reload()
+})
